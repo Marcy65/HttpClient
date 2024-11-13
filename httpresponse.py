@@ -8,7 +8,7 @@ class HttpResponse:
         version, status_code, status = status_line.split(b" ", maxsplit=2)
 
         self.version = version.decode(encoding=encoding, errors=errors)
-        self.status_code = status_code.decode(encoding=encoding, errors=errors)
+        self.status_code = int(status_code.decode(encoding=encoding, errors=errors))
         self.status = status.decode(encoding=encoding, errors=errors)
 
         header_lines = header_lines.splitlines()[1:]
@@ -25,6 +25,8 @@ class HttpResponse:
         self.content = content
         self.raw = response_bytes
 
+        self.request = None
+
         return
     
     def text(self, encoding: str = "utf-8", errors: str = "replace"):
@@ -33,12 +35,4 @@ class HttpResponse:
     
     def __str__(self) -> str:
 
-        representation = f"{self.version} {self.status_code} {self.status}\r\n\r\n"
-
-        for k, v in self.headers.items():
-            representation += f"{k}: {v}\r\n"
-        representation += "\r\n"
-
-        representation += self.text()
-
-        return representation
+        return self.raw.decode(encoding="utf-8", errors="replace")
